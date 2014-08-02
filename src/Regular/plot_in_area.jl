@@ -65,18 +65,16 @@ function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}; colormap 
   sstp = Selected_within(p,sst)
   m[:contourf](plon,plat,sstp,levels = plevels,spacing ="proportional",extend="both")
   m[:colorbar]()
-  if (whether_tight)
-    tight_layout()
-  end
+  (whether_tight) ? tight_layout() : nothing
 end
 
-function scatter_something(p:: AnArea_Regular, mask :: BitArray{2}; whether_clf :: Bool = true, pre_plot :: Symbol = :boundary)
+function scatter_something(p:: AnArea_Regular, mask :: BitArray{2}; whether_clf :: Bool = true, pre_plot :: Symbol = :boundary, whether_tight :: Bool = true)
   if (whether_clf)
     clf();
   end
   m = plot_map(p,pre_plot = pre_plot)
   m[:scatter](p.plon[mask],p.plat[mask])
-  tight_layout()
+  whether_tight ? tight_layout() : nothing
 end
 
 function scatter_pretty(p:: AnArea_Regular, mask :: BitArray{3}; whether_clf :: Bool = true)
