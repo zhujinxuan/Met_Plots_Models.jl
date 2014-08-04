@@ -52,13 +52,13 @@ function plot_something( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: C
   m[:colorbar]()
 end
 
-function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}; colormap :: ColorMap = sst_cmap, levels :: Array{Float64,1} = min_max_levels(sst),stratagy :: Symbol = :default, whether_tight :: Bool = true, whether_zoomed :: Bool = false)
+function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}; colormap :: ColorMap = sst_cmap, levels :: Array{Float64,1} = min_max_levels(sst),stratagy :: Symbol = :default, whether_tight :: Bool = true, whether_zoomed :: Bool = false, pre_plot :: Symbol = :default)
   plevels = read_stratagy(p,sst,levels = levels , stratagy = stratagy)
   clf();
   plat = p.plat
   plon = p.plon
   set_cmap(colormap)
-  m = plot_map(p)
+  m = plot_map(p, pre_plot = pre_plot)
   if(length(size(sst)) > 2)
     sst = squeeze(sst,3)
   end
