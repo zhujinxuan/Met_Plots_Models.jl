@@ -36,7 +36,7 @@ function plot_map(p :: AnArea_Regular; whether_plot_map :: Bool = true, pre_plot
 end
 
 
-function plot_something( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: ColorMap = sst_cmap, levels :: Array{Float64,1} = [NaN], stratagy :: Symbol  = :default)
+function plot_something( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: ColorMap = sst_cmap, levels :: Array{Float64,1} = [NaN], stratagy :: Symbol  = :default, whether_zoomed :: Bool = false)
   plevels = read_stratagy(p,sst,levels = levels , stratagy = stratagy)
   print(plevels)
   clf();
@@ -47,12 +47,12 @@ function plot_something( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: C
     sst = squeeze(sst,3)
   end
   m = plot_map(p)
-  sstp = Selected_within(p,sst)
+  sstp = (whether_zoomed) ? sst :Selected_within(p,sst)
   m[:contourf](plon,plat,sstp,levels=plevels)
   m[:colorbar]()
 end
 
-function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}; colormap :: ColorMap = sst_cmap, levels :: Array{Float64,1} = min_max_levels(sst),stratagy :: Symbol = :default, whether_tight :: Bool = true)
+function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}; colormap :: ColorMap = sst_cmap, levels :: Array{Float64,1} = min_max_levels(sst),stratagy :: Symbol = :default, whether_tight :: Bool = true, whether_zoomed :: Bool = false)
   plevels = read_stratagy(p,sst,levels = levels , stratagy = stratagy)
   clf();
   plat = p.plat
@@ -62,7 +62,7 @@ function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}; colormap 
   if(length(size(sst)) > 2)
     sst = squeeze(sst,3)
   end
-  sstp = Selected_within(p,sst)
+  sstp = (whether_zoomed) ? sst :Selected_within(p,sst)
   m[:contourf](plon,plat,sstp,levels = plevels,spacing ="proportional",extend="both")
   m[:colorbar]()
   (whether_tight) ? tight_layout() : nothing
