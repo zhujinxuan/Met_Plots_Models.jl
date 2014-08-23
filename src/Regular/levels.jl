@@ -2,7 +2,7 @@
 function read_stratagy( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: ColorMap = sst_cmap, levels :: Array{Float64,1} = [NaN], stratagy :: Symbol  = :default)
   if (stratagy == :default)
     if  ( length(find(isnan(levels))) > 0) 
-      plevels = min_max_levels(sst) 
+      plevels = sort_levels(sst) 
     else
       plevels = levels
     end
@@ -12,6 +12,12 @@ function read_stratagy( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: Co
       plevels == sst_levels
   end
   return plevels 
+end
+
+function sort_levels( sst; nlevel :: Int64 = 7)
+  sst1 = sort(sst[!isnan(sst)])
+  n = lenth(sst1)
+  return sst1[(int(floor([0:nlevel]/nlevel) * (n-1) + 1 ))]
 end
 
 function extend_levels( levels , sst; whether_extend_to_max :: Bool = true, whether_extend_to_min :: Bool = true,
