@@ -36,8 +36,8 @@ function plot_map(p :: AnArea_Regular; whether_plot_map :: Bool = true, pre_plot
 end
 
 
-function plot_something( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: ColorMap = sst_cmap, levels :: Array{Float64,1} = [NaN], stratagy :: Symbol  = :default, whether_zoomed :: Bool = false)
-  plevels = read_stratagy(p,sst,levels = levels , stratagy = stratagy)
+function plot_something( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: ColorMap = sst_cmap, levels :: Array{Float64,1} = [NaN], stratagy :: Symbol  = :default, whether_zoomed :: Bool = false, filter :: Function = x->x)
+  plevels = read_stratagy(p,sst,levels = levels , stratagy = stratagy, filter = filter)
   print(plevels)
   clf();
   plat = p.plat
@@ -52,8 +52,8 @@ function plot_something( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: C
   m[:colorbar]()
 end
 
-function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}; colormap :: ColorMap = sst_cmap, levels :: Array{Float64,1} = min_max_levels(sst),stratagy :: Symbol = :default, whether_tight :: Bool = true, whether_zoomed :: Bool = false, pre_plot :: Symbol = :default)
-  plevels = read_stratagy(p,sst,levels = levels , stratagy = stratagy)
+function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}; colormap :: ColorMap = sst_cmap, levels :: Array{Float64,1} = min_max_levels(sst),stratagy :: Symbol = :default, whether_tight :: Bool = true, whether_zoomed :: Bool = false, pre_plot :: Symbol = :default, filter :: Function = x->x)
+  plevels = read_stratagy(p,sst,levels = levels , stratagy = stratagy, filter = filter)
   clf();
   plat = p.plat
   plon = p.plon
