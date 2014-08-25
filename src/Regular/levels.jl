@@ -13,7 +13,7 @@ function read_stratagy( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: Co
   return plevels 
 end
 
-function sort_levels( sst; nlevel :: Int64 = 7, filter :: Function x->x)
+function sort_levels( sst; nlevel :: Int64 = 7, filter :: Function = x->x)
   sst1 = sort(sst[!isnan(sst)])
   sst1 = filter(sst1)
   n = length(sst1)
