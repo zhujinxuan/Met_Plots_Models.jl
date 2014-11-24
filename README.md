@@ -4,13 +4,9 @@
 
 ## The Motivation for this package
 
-As a meteorologist, I plan a lot of drafty figures in my research.  
-But plotting meteorological figures with most packages in meteorology requires repeative tasks: manually configuring longitude, latitude and sometimes a manually rearrangement of elements when plotting across the Merdian.
+You might have a feeling of boring when plot a lot of drafty figures(scatters, contourfs ...) with NCL, matlibplot, or other packages, manually configuring longitude, latitude, levels again and again with codes modified little. 
 
-This boring tasks are boring.
+So I provide a wrapper of matlibplot in Julia to plot a drafty figure with one command, once with configuring longitude and latitude once autonomously and without configuring levels most time. 
 
-So I develop this package to plot drafty figures within one or two commands.
-
-
-## Examples
+## Examples and Documents
 In progress
