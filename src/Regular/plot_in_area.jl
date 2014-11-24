@@ -1,4 +1,5 @@
 include("levels.jl")
+
 function AnArea_Import( p :: AnArea_Regular; plon :: Array{Float64,2} = p.plat, plat :: Array{Float64,2} = p.plon)
   p1 = copy(p) ;
   p1.plat = plat ;
@@ -8,15 +9,15 @@ function AnArea_Import( p :: AnArea_Regular; plon :: Array{Float64,2} = p.plat, 
   p1
 end
 
-function plot_map(p :: AnArea_Regular; whether_plot_map :: Bool = true, pre_plot :: Symbol = :default)
-  clf();
+function plot_map(p :: AnArea_Regular; whether_plot_map :: Bool = true, pre_plot :: Symbol = :default; extented_strategy = x->x)
+  (llon, rlon, slat, nlat ) = ( 0.0, 360.0, -90.0, 90.0)
   if (haskey( p.configs,"wesn"))
     (llon, rlon, slat, nlat ) = p.configs["wesn"]
-    m = basemap.Basemap(projection="cyl",llcrnrlat=slat ,urcrnrlat=nlat , llcrnrlon=llon,urcrnrlon=rlon,resolution="l")
-  else
-    m = basemap.Basemap(projection="cyl",llcrnrlat=-90,urcrnrlat=90, llcrnrlon=0,urcrnrlon=360,resolution="l")
   end
+  m = basemap.Basemap(projection="cyl",llcrnrlat=slat ,urcrnrlat=nlat , llcrnrlon=llon,urcrnrlon=rlon,resolution=None)
   if (whether_plot_map)
+    clf();
+    ax = axes([0,0,1,1])
     if (pre_plot == :default)
       m[:drawmapboundary](fill_color="#4771a5")
       m[:fillcontinents](color="#555555")
@@ -27,18 +28,20 @@ function plot_map(p :: AnArea_Regular; whether_plot_map :: Bool = true, pre_plot
       #= m[:drawmapboundary](fill_color="#4771a5") =#
       m[:drawparallels](-90:10.0:90,labels=[1,0,0,0],fontsize=10);
       m[:drawmeridians](0:30:360.0,labels=[0,0,0,1],fontsize=10);
+    elseif (pre_plot == :demonstrate)
+      m[:drawcoastlines]()
+      m[:drawparallels](-80:20.0:80,labels=[1,0,0,0],linewidth=0.5);
+      m[:drawmeridians](0:30:360.0,labels=[0,0,0,1], linewidth = 0.5);
     else
       m[:drawparallels](-90:10.0:90,labels=[1,0,0,0],fontsize=10);
       m[:drawmeridians](0:30:360.0,labels=[0,0,0,1],fontsize=10);
     end
   end
-  return m 
+  return extented_strategy(m)
 end
 
 
-function plot_something( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: ColorMap = sst_cmap, levels :: Array{Float64,1} = [NaN], stratagy :: Symbol  = :default, whether_zoomed :: Bool = false, filter :: Function = x->x)
-  plevels = read_stratagy(p,sst,levels = levels , stratagy = stratagy, filter = filter)
-  print(plevels)
+function plot_something( p :: AnArea_Regular,sst :: Array{Float64}, args... ;colormap:: ColorMap = sst_cmap, levels :: Array{Float64,1} = [NaN], stratagy :: Symbol  = :default, whether_zoomed :: Bool = false, filter :: Function = x->x, kws...)
   clf();
   plat = p.plat
   plon = p.plon
@@ -48,32 +51,49 @@ function plot_something( p :: AnArea_Regular,sst :: Array{Float64} ;colormap:: C
   end
   m = plot_map(p)
   sstp = (whether_zoomed) ? sst :Selected_within(p,sst)
-  m[:contourf](plon,plat,sstp,levels=plevels)
+  if (stratagy == :nolevels)
+    m[:contourf](plon,plat,sstp, args... ; kws...)
+  else
+    plevels = read_stratagy(psst,levels = levels , stratagy = stratagy, filter = filter)
+    print(plevels)
+    m[:contourf](plon,plat,sstp,levels=plevels)
+  end
   m[:colorbar]()
 end
 
-function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}; colormap :: ColorMap = sst_cmap, levels :: Array{Float64,1} = min_max_levels(sst),stratagy :: Symbol = :default, whether_tight :: Bool = true, whether_zoomed :: Bool = false, pre_plot :: Symbol = :default, filter :: Function = x->x)
-  plevels = read_stratagy(p,sst,levels = levels , stratagy = stratagy, filter = filter)
+function mapplot_something(p :: AnArea_Regular, sst :: Array{Float64}, args...;
+  colormap :: ColorMap = sst_cmap, levels :: Array{Float64,1} = [NaN],stratagy :: Symbol = :default,
+  whether_tight :: Bool = false, whether_zoomed :: Bool = false, 
+  filter :: Function = x->x, spacing ="proportional", 
+  pre_plot :: Symbol = :default, map_stratege = x->x, m = plot_map(p, pre_plot = pre_plot; map_stratege), kws...)
   clf();
   plat = p.plat
   plon = p.plon
   set_cmap(colormap)
-  m = plot_map(p, pre_plot = pre_plot)
   if(length(size(sst)) > 2)
     sst = squeeze(sst,3)
   end
   sstp = (whether_zoomed) ? sst :Selected_within(p,sst)
-  m[:contourf](plon,plat,sstp,levels = plevels,spacing ="proportional",extend="both")
-  m[:colorbar]()
+  plevels = read_stratagy(sstp,levels = levels , stratagy = stratagy, filter = filter)
+  if (stratage == :nolevels )
+    m[:contourf](plon,plat,sstp,spacing = spacing, args...; kws ...)
+  else
+    m[:contourf](plon,plat,sstp,levels=plevels,spacing = spacing, args...; kws ...)
+  end
+  m[:colorbar]
   (whether_tight) ? tight_layout() : nothing
+  return m
 end
 
-function scatter_something(p:: AnArea_Regular, mask :: BitArray{2}; whether_clf :: Bool = true, pre_plot :: Symbol = :boundary, whether_tight :: Bool = true)
+function scatter_something(p:: AnArea_Regular, mask :: BitArray{2}; whether_clf :: Bool = true, 
+  pre_plot :: Symbol = :boundary, marker = "x"
+  m = plot_map(p,whether_plot_map=whether_clf,pre_plot = pre_plot),
+  whether_tight :: Bool = false, kws...
+  )
   if (whether_clf)
     clf();
   end
-  m = plot_map(p,pre_plot = pre_plot)
-  m[:scatter](p.plon[mask],p.plat[mask])
+  m[:scatter](p.plon[mask],p.plat[mask], marker = marker; kws...)
   whether_tight ? tight_layout() : nothing
 end
 
@@ -129,6 +149,7 @@ function mapplot_cross_compare( p:: AnArea_Regular, sst :: Array{Float64,3}, fig
     end
   end
 end
+
 export plot_map
 export scatter_something
 export scatter_pretty

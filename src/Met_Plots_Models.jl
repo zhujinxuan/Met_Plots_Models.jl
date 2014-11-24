@@ -19,4 +19,12 @@ export zero_to_one_ratio_cmap,sst_only_positive_cmap,sst_only_negative_cmap, sst
 export plot_something,plot_test , plot_test1, mapplot_something
 export mapplot_cross_compare
 
+function flush_figures( fpath :: String)
+  println("$fpath.png")
+  savefig("$fpath.png")
+  savefig("$fpath.pdf")
+  savefig("$fpath.svg")
+end
+export flush_figures
+
 end # module
