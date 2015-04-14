@@ -23,9 +23,11 @@ function plot_something (p:: Any_Area_is_an_Area, sst; colormaps :: ColorMap = s
   error("plot something quickly without maps")
 end
 
-function mapplot_something(p :: Any_Area_is_an_Area, sst :: Array{Float64}; colormaps :: ColorMap = sst_cmap ,levels = NaN , stratage :: Symbol = :default)
-  error("plot something on map")
-end
+#= function mapplot_something(p :: Any_Area_is_an_Area, sst :: Array{Float64}; =# 
+#=   colormaps :: ColorMap = sst_cmap ,levels = NaN , stratage :: Symbol = :default) =#
+#=   error("plot something on map") =#
+#= end =#
+
 function plot_test ( p :: Any_Area_is_an_Area ,sstname :: ASCIIString = "sst")
   error("plot sst as an test")
 end
