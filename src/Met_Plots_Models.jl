@@ -11,13 +11,13 @@ export PyPlot
 @pyimport prettyplotlib as ppl
 @pyimport brewer2mpl
 
-include("type/plot_in_area.jl")
-include("Regular/plot_in_area.jl")
+include("colormaps/cmaps.jl")
 
 export zero_to_one_ratio_cmap,sst_only_positive_cmap,sst_only_negative_cmap, sst_cmap, diff_cmap, pp_cmap
 
-export plot_something,plot_test , plot_test1, mapplot_something
-export mapplot_cross_compare
+include("pairs/all.jl")
+
+#= export mapplot_cross_compare =#
 
 function flush_figures( fpath :: String)
   println("$fpath.png")
@@ -26,5 +26,6 @@ function flush_figures( fpath :: String)
   savefig("$fpath.svg")
 end
 export flush_figures
+
 
 end # module
