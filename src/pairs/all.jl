@@ -10,6 +10,13 @@ function simple_map(pa :: AnArea_Regular)
 end
 export simple_map
 
+function DrawMap(m)
+  m[:fillcontinents](color="#555555")
+  m[:drawmeridians](0:30:360.0,labels=[0,0,0,1],fontsize=10);
+  m[:drawparallels](-90:10.0:90,labels=[1,0,0,0],fontsize=10);
+end
+export DrawMap
+
 function canvas ( pa :: AnArea_Regular,xarr :: Array{Float64,2})
   return (pa.plon, pa.plat, xarr)
 end
