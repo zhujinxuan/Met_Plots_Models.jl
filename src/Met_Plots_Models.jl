@@ -20,7 +20,7 @@ include("pairs/all.jl")
 
 #= export mapplot_cross_compare =#
 
-function flush_figures( fpath :: String)
+function flush_figures(fpath :: AbstractString)
   println("$fpath.png")
   savefig("$fpath.png")
   savefig("$fpath.pdf")
