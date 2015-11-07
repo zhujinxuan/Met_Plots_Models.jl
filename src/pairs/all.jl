@@ -1,10 +1,16 @@
 function simple_map(pa :: AnArea_Regular)
 
-  slat = pa.lat[1] 
-  nlat = pa.lat[end] 
+  slat = minimum(pa.lat )
+  nlat = maximum(pa.lat)
 
-  llon = pa.lon[1] 
-  rlon = pa.lon[end] 
+  
+  llon = minimum(pa.lon )
+  rlon = maximum(pa.lon )
+  if (sum( (pa.lon .> 355) & (pa.lon .< 5)) > 0)
+    if (sum( (pa.lon .< 185) & (pa.lon .> 175) ) == 0)
+      (llon, rlon) = (rlon, llon)
+    end
+  end
   m = basemap.Basemap(projection="cyl",
   llcrnrlat=slat ,urcrnrlat=nlat ,llcrnrlon=llon,urcrnrlon=rlon,resolution="c")
 end
@@ -17,15 +23,25 @@ function DrawMap(m)
 end
 export DrawMap
 
-function canvas ( pa :: AnArea_Regular,xarr :: Array{Float64,2})
-  return (pa.plon, pa.plat, xarr)
+function lonrotate(plon :: Array{Float64,2}, rr)
+  if ((plon[1,1] > 180) & (plon[end,1] < 180))
+    lon = mean(plon ,2)
+    return [rr[lon .<= 180,:] ; rr[lon .> 180,:]]
+  else 
+    return rr
+  end
+end
+function canvas( pa :: AnArea_Regular,xarr :: Array{Float64,2})
+  return map(x->lonrotate(pa.plon,x),(pa.plon, pa.plat, xarr))
 end
 
-function canvas ( pa :: AnArea_Regular,xarr :: Array{Bool,2})
-  return (pa.plon[xarr], pa.plat[xarr])
+function canvas( pa :: AnArea_Regular,xarr :: Array{Bool,2})
+  (plon,plat,xx) = map( x-> lonrotate(plon,x), (pa.plon, pa.plat, xarr))
+  return map(plon[xx], plat[xx])
 end
 
-function canvas ( pa :: AnArea_Regular,xarr :: BitArray{2})
-  return (pa.plon[xarr], pa.plat[xarr])
+function canvas( pa :: AnArea_Regular,xarr :: BitArray{2})
+  (plon,plat,xx) = map( x-> lonrotate(plon,x), (pa.plon, pa.plat, xarr))
+  return map(plon[xx], plat[xx])
 end
 export canvas
