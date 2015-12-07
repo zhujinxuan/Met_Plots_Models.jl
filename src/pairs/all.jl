@@ -16,8 +16,12 @@ function simple_map(pa :: AnArea_Regular)
 end
 export simple_map
 
-function DrawMap(m)
-  m[:fillcontinents](color="#555555")
+function DrawMap(m; NoLands :: Bool = false)
+  if ( NoLands) 
+    m[:drawcoastlines](color="#555555")
+  else
+    m[:fillcontinents](color="#555555")
+  end
   m[:drawmeridians](0:30:360.0,labels=[0,0,0,1],fontsize=10);
   m[:drawparallels](-90:10.0:90,labels=[1,0,0,0],fontsize=10);
 end
