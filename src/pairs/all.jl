@@ -35,6 +35,7 @@ function lonrotate(plon :: Array{Float64,2}, rr)
     return rr
   end
 end
+
 function canvas( pa :: AnArea_Regular,xarr :: Array{Float64,2})
   return map(x->lonrotate(pa.plon,x),(pa.plon, pa.plat, xarr))
 end
@@ -48,4 +49,26 @@ function canvas( pa :: AnArea_Regular,xarr :: BitArray{2})
   (plon,plat,xx) = map( x-> lonrotate(plon,x), (pa.plon, pa.plat, xarr))
   return map(plon[xx], plat[xx])
 end
+function canvas(x :: Array{Float64,1}, y :: Array{Float64,1},  xarr :: Array{Float64,2})
+  (px, py) = begin
+    p1 = x .+ zeros(y')
+    p2 = y .+ zeros(x')
+    (p1, p2')
+  end
+  return (px, py,xarr)
+end
+
+function canvas(x :: Array{Float64,1}, y :: Array{Float64,1},  xarr :: Array{Float64})
+  xarr1 = squeeze(xarr, tuple(findin(size(xarr),1)...))
+  @assert ( ndims(xarr1) == 2)
+  return canvas(x, y, xarr1)
+end
 export canvas
+
+function clevels( xarr :: Array{Float64};nlevels :: Int64 = 5, center :: Float64 = 0.0)
+  z1 = 6*std(xarr)/nlevels
+  return (:levels, center+ z1*collect((-nlevels)/2.0:(nlevels)/2.0))
+end
+
+
+export clevels
