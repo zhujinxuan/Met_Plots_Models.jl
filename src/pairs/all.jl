@@ -65,10 +65,4 @@ function canvas(x :: Array{Float64,1}, y :: Array{Float64,1},  xarr :: Array{Flo
 end
 export canvas
 
-function clevels( xarr :: Array{Float64};nlevels :: Int64 = 5, center :: Float64 = 0.0)
-  z1 = 6*std(xarr)/nlevels
-  return (:levels, center+ z1*collect((-nlevels)/2.0:(nlevels)/2.0))
-end
-
-
-export clevels
+include("levels.jl")
