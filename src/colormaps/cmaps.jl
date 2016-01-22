@@ -1,6 +1,10 @@
 
 zero_to_one_ratio_colormap = brewer2mpl.get_map("Purples", "sequential", 5)
 zero_to_one_ratio_cmap = zero_to_one_ratio_colormap[:get_mpl_colormap]()
+
+purple_colormap = brewer2mpl.get_map("Purples", "sequential", 5)
+purple_cmap = purple_colormap[:get_mpl_colormap]()
+
 sst_only_positive_colormap = brewer2mpl.get_map("Reds","sequential",8)
 sst_only_positive_cmap = sst_only_positive_colormap[:get_mpl_colormap]()
 sst_only_negative_colormap     = brewer2mpl.get_map("Blues","sequential",8,reverse=true)

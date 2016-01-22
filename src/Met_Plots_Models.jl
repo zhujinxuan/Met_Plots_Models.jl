@@ -13,6 +13,7 @@ export PyPlot
 include("colormaps/cmaps.jl")
 
 export zero_to_one_ratio_cmap;
+export purple_cmap
 export sst_only_positive_cmap;
 export sst_only_negative_cmap, sst_cmap, diff_cmap, pp_cmap;
 
